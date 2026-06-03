@@ -64,15 +64,29 @@ for index, file in ipairs(markdownFiles) do
     end
 end
 
+-- replace markdownFiles.content with md file content
+for index, value in ipairs(markdownFiles) do
+    local f = io.open(markdownFiles[index].filePath)
+    if f then
+        local content = f:read("*a")
+        f:close()
+
+        -- delete options section
+        content = content:sub(5, content:len())
+        content = content:sub(content:find("---\n")+4, content:len())
+
+        markdownFiles[index].content = content
+    end
+end
+
 for index, value in ipairs(markdownFiles) do
     -- print file path with index
     print(index .. ': ' .. markdownFiles[index].filePath)
     local f = io.open(markdownFiles[index].filePath, 'r')
     if f then
-        local content = f:read("*all")
         f:close()
         -- print file content
-        print(content)
+        print(markdownFiles[index].content)
         -- print file options
         print("--- OPTIONS ---")
         for i, value in ipairs(markdownFiles[index].options) do
