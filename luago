@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+lua /home/murat/Projects/luago/luago.lua
