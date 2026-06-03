@@ -80,6 +80,7 @@ for index, value in ipairs(markdownFiles) do
 end
 
 for index, value in ipairs(markdownFiles) do
+    print("---------------")
     -- print file path with index
     print(index .. ': ' .. markdownFiles[index].filePath)
     local f = io.open(markdownFiles[index].filePath, 'r')
@@ -100,6 +101,14 @@ end
 
 -- get index.html content
 local indexFile = io.open("index.html"):read("*all")
+local siteName
+local siteTitle
+
+for i, v in ipairs(markdownFiles) do
+    if v.fileName == "index" then
+        -- get siteName and siteTitle
+    end
+end
 
 -- remove and create "public/" directory
 lfs.rmdir("public")
@@ -112,6 +121,12 @@ for index, value in ipairs(markdownFiles) do
     if htmlFile then
         local content = indexFile
         -- replace <!-- sitecontents --> with markdown file content
+        local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
+        if start_idx and end_idx then
+            local first = content:sub(1, start_idx - 1)
+            local second = content:sub(end_idx + 1)
+            content = first .. markdownFiles[index].content .. second
+        end
 
         htmlFile:write(content)
         htmlFile:close()
