@@ -19,7 +19,8 @@ for file in lfs.dir(currentDir) do
             markdownFileCount = markdownFileCount + 1
             markdownFiles[markdownFileCount] = {
                 options = {},
-                filePath = filePath
+                filePath = filePath,
+                content = ""
             }
         end
     end
@@ -34,7 +35,27 @@ for index, file in ipairs(markdownFiles) do
     if f then
         local content = f:read("*all")
         f:close()
-        if content:sub(1,3) ~= "---" then
+        if content:sub(1,4) ~= "---\n" then
+            return print(file.filePath .. " file doesn't have a options section!")
+        end
+        local fileOptions = content:sub(5, content:len())
+        if fileOptions:find("---") then
+            fileOptions = fileOptions:sub(1, fileOptions:find("---\n")-1)
+            local lines = {}
+            local lineCount = 0
+            while fileOptions:find("\n") do
+                lineCount = lineCount + 1
+                lines[lineCount] = fileOptions:sub(1, fileOptions:find("\n"))
+                fileOptions = fileOptions:sub(fileOptions:find("\n")+1, fileOptions:len())
+            end
+
+            for i, value in ipairs(lines) do
+                if value:sub(value:len(), value:len()) == "\n" then
+                    value = value:sub(1, value:find("\n")-1)
+                end
+                markdownFiles[index].options[i] = value
+            end
+        else
             return print(file.filePath .. " file doesn't have a options section!")
         end
     else
@@ -51,6 +72,12 @@ for index, value in ipairs(markdownFiles) do
         f:close()
         -- print file content
         print(content)
+        -- print file options
+        print("--- OPTIONS ---")
+        for i, value in ipairs(markdownFiles[index].options) do
+            print(markdownFiles[index].options[i])
+        end
+        print("---------------")
     else
         print("can't read the file " .. markdownFiles[index].filePath)
     end
