@@ -20,6 +20,7 @@ for file in lfs.dir(currentDir) do
             markdownFiles[markdownFileCount] = {
                 options = {},
                 filePath = filePath,
+                fileName = file:sub(1, file:len()-3),
                 content = ""
             }
         end
@@ -80,6 +81,28 @@ for index, value in ipairs(markdownFiles) do
         print("---------------")
     else
         print("can't read the file " .. markdownFiles[index].filePath)
+    end
+end
+
+-- get index.html content
+local indexFile = io.open("index.html"):read("*all")
+
+-- remove and create "public/" directory
+lfs.rmdir("public")
+lfs.mkdir("public")
+
+for index, value in ipairs(markdownFiles) do
+    local workDir = lfs.currentdir()
+    -- create html file for that md file
+    local htmlFile = io.open(workDir .. "/public/" .. markdownFiles[index].fileName .. ".html", 'w')
+    if htmlFile then
+        local content = indexFile
+        -- replace <!-- sitecontents --> with markdown file content
+
+        htmlFile:write(content)
+        htmlFile:close()
+    else
+        print("Error: Cannot create html file for " .. markdownFiles[index].filePath)
     end
 end
 
