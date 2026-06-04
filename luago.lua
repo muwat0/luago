@@ -113,7 +113,19 @@ local siteTitle
 
 for i, v in ipairs(markdownFiles) do
     if v.fileName == "index" then
-        -- get siteName and siteTitle
+        -- replace sitename and sitetitle
+        local start_idx, end_idx = indexFile:find("<!-- sitetitle -->", 1, true)
+        if start_idx and end_idx then
+            local first = indexFile:sub(1, start_idx - 1)
+            local second = indexFile:sub(end_idx + 1)
+            indexFile = first .. markdownFiles[i].options["sitetitle"] .. second
+        end
+        start_idx, end_idx = indexFile:find("<!-- sitename -->", 1, true)
+        if start_idx and end_idx then
+            local first = indexFile:sub(1, start_idx - 1)
+            local second = indexFile:sub(end_idx + 1)
+            indexFile = first .. markdownFiles[i].options["sitename"] .. second
+        end
     end
 end
 
