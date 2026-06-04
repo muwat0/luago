@@ -50,6 +50,7 @@ for index, file in ipairs(markdownFiles) do
                 fileOptions = fileOptions:sub(fileOptions:find("\n")+1, fileOptions:len())
             end
 
+            -- fill options table
             for i, value in ipairs(lines) do
                 if value:sub(value:len(), value:len()) == "\n" then
                     value = value:sub(1, value:find("\n")-1)
@@ -111,24 +112,6 @@ local indexFile = io.open("index.html"):read("*all")
 local siteName
 local siteTitle
 
-for i, v in ipairs(markdownFiles) do
-    if v.fileName == "index" then
-        -- replace sitename and sitetitle
-        local start_idx, end_idx = indexFile:find("<!-- sitetitle -->", 1, true)
-        if start_idx and end_idx then
-            local first = indexFile:sub(1, start_idx - 1)
-            local second = indexFile:sub(end_idx + 1)
-            indexFile = first .. markdownFiles[i].options["sitetitle"] .. second
-        end
-        start_idx, end_idx = indexFile:find("<!-- sitename -->", 1, true)
-        if start_idx and end_idx then
-            local first = indexFile:sub(1, start_idx - 1)
-            local second = indexFile:sub(end_idx + 1)
-            indexFile = first .. markdownFiles[i].options["sitename"] .. second
-        end
-    end
-end
-
 -- remove and create "public/" directory
 lfs.rmdir("public")
 lfs.mkdir("public")
@@ -145,6 +128,14 @@ for index, value in ipairs(markdownFiles) do
             local first = content:sub(1, start_idx - 1)
             local second = content:sub(end_idx + 1)
             content = first .. markdownFiles[index].content .. second
+        end
+        while content:find("<!-- title -->", 1, true) do
+            start_idx, end_idx = content:find("<!-- title -->", 1, true)
+            if start_idx and end_idx then
+                local first = content:sub(1, start_idx - 1)
+                local second = content:sub(end_idx + 1)
+                content = first .. markdownFiles[index].options["title"] .. second
+            end
         end
 
         htmlFile:write(content)
