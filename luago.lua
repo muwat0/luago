@@ -54,7 +54,14 @@ for index, file in ipairs(markdownFiles) do
                 if value:sub(value:len(), value:len()) == "\n" then
                     value = value:sub(1, value:find("\n")-1)
                 end
-                markdownFiles[index].options[i] = value
+                local colonPos = value:find(":")
+                if colonPos then
+                    local key = value:sub(1, colonPos - 1):match("^%s*(.-)%s*$")
+                    local val = value:sub(colonPos + 1):match("^%s*(.-)%s*$")
+                    if key and key ~= "" then
+                        markdownFiles[index].options[key] = val
+                    end
+                end
             end
         else
             return print(file.filePath .. " file doesn't have a options section!")
@@ -90,8 +97,8 @@ for index, value in ipairs(markdownFiles) do
         print(markdownFiles[index].content)
         -- print file options
         print("--- OPTIONS ---")
-        for i, value in ipairs(markdownFiles[index].options) do
-            print(markdownFiles[index].options[i])
+        for key, val in pairs(markdownFiles[index].options) do
+            print(key .. ": " .. val)
         end
         print("---------------")
     else
