@@ -115,6 +115,7 @@ lfs.rmdir("public")
 lfs.mkdir("public")
 
 for index, _ in ipairs(markdownFiles) do
+    if markdownFiles[index].options["draft"] ~= "yes" then
     local workDir = lfs.currentdir()
     -- create html file for that md file
     local htmlFile = io.open(workDir .. "/public/" .. markdownFiles[index].fileName .. ".html", 'w')
@@ -264,4 +265,4 @@ for index, _ in ipairs(markdownFiles) do
         print("Error: Cannot create html file for " .. markdownFiles[index].filePath)
     end
 end
-
+end
