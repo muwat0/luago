@@ -109,8 +109,6 @@ end
 
 -- get index.html content
 local indexFile = io.open("index.html"):read("*all")
-local siteName
-local siteTitle
 
 -- remove and create "public/" directory
 lfs.rmdir("public")
@@ -239,7 +237,6 @@ for index, _ in ipairs(markdownFiles) do
             s = s:gsub("`(.-)`", "<code>%1</code>")
             -- horizontal rule
             s = s:gsub("%-%-%-", "<hr>")
-            -- TODO: p for normal text
 
             return s
         end
