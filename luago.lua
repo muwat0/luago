@@ -140,6 +140,8 @@ for index, value in ipairs(markdownFiles) do
         markdownFiles[index].content = markdownFiles[index].content:gsub("%*(.-)%*", "<i>%1</i>")
         -- links
         markdownFiles[index].content = markdownFiles[index].content:gsub("%[(.-)%]%((.-)%)", '<a href="%2">%1</a>')
+        -- code
+        markdownFiles[index].content = markdownFiles[index].content:gsub("`(.-)`", "<code>%1</code>")
 
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
