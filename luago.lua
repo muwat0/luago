@@ -130,6 +130,9 @@ for index, value in ipairs(markdownFiles) do
         markdownFiles[index].content = markdownFiles[index].content:gsub("###%s*(.-)%s*<br>", "<h3>%1</h3>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("##%s*(.-)%s*<br>", "<h2>%1</h2>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("#%s*(.-)%s*<br>", "<h1>%1</h1>")
+        -- bold and italic text
+        markdownFiles[index].content = markdownFiles[index].content:gsub("%*%*(.-)%*%*", "<b>%1</b>")
+        markdownFiles[index].content = markdownFiles[index].content:gsub("%*(.-)%*", "<i>%1</i>")
 
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
