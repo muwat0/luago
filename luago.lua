@@ -126,13 +126,12 @@ for index, value in ipairs(markdownFiles) do
         -- STYLING
         local function styling(s)
             -- blockquote
-            -- s = s:gsub(">%s*(.-)%s*\r?\n", "<blockquote>%1</blockquote>")
             local lines = {}
-            for line in s:gmatch("([^\n]*)\n?") do
+            for line in (s .. "\n"):gmatch("([^\n]*)\n?") do
                 local nline = line:gsub("^>%s*(.*)", "<blockquote>%1</blockquote>")
                 table.insert(lines, nline)
             end
-            s = table.concat(lines, "\n")
+            s = table.concat(lines)
             -- line breaks
             s = s:gsub("\r?\n", "<br>")
             -- headers
@@ -157,6 +156,7 @@ for index, value in ipairs(markdownFiles) do
             -- horizontal rule
             s = s:gsub("%-%-%-", "<hr>")
             -- TODO: ordered and unordered lists
+            -- TODO: p for normal text
 
             return s
         end
