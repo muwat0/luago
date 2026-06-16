@@ -122,6 +122,11 @@ for index, value in ipairs(markdownFiles) do
     local htmlFile = io.open(workDir .. "/public/" .. markdownFiles[index].fileName .. ".html", 'w')
     if htmlFile then
         local content = indexFile
+
+        -- STYLING
+        -- line breaks
+        markdownFiles[index].content = markdownFiles[index].content:gsub("\r?\n", "<br>")
+
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
         if start_idx and end_idx then
