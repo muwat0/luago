@@ -127,12 +127,17 @@ for index, value in ipairs(markdownFiles) do
         -- line breaks
         markdownFiles[index].content = markdownFiles[index].content:gsub("\r?\n", "<br>")
         -- headers
+        markdownFiles[index].content = markdownFiles[index].content:gsub("######%s*(.-)%s*<br>", "<h6>%1</h6>")
+        markdownFiles[index].content = markdownFiles[index].content:gsub("#####%s*(.-)%s*<br>", "<h5>%1</h5>")
+        markdownFiles[index].content = markdownFiles[index].content:gsub("####%s*(.-)%s*<br>", "<h4>%1</h4>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("###%s*(.-)%s*<br>", "<h3>%1</h3>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("##%s*(.-)%s*<br>", "<h2>%1</h2>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("#%s*(.-)%s*<br>", "<h1>%1</h1>")
         -- bold and italic text
         markdownFiles[index].content = markdownFiles[index].content:gsub("%*%*(.-)%*%*", "<b>%1</b>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("%*(.-)%*", "<i>%1</i>")
+        -- links
+        markdownFiles[index].content = markdownFiles[index].content:gsub("%[(.-)%]%((.-)%)", '<a href="%2">%1</a>')
 
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
