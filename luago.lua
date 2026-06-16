@@ -51,7 +51,7 @@ for index, file in ipairs(markdownFiles) do
             end
 
             -- fill options table
-            for i, value in ipairs(lines) do
+            for _, value in ipairs(lines) do
                 if value:sub(value:len(), value:len()) == "\n" then
                     value = value:sub(1, value:find("\n")-1)
                 end
@@ -73,7 +73,7 @@ for index, file in ipairs(markdownFiles) do
 end
 
 -- replace markdownFiles.content with md file content
-for index, value in ipairs(markdownFiles) do
+for index, _ in ipairs(markdownFiles) do
     local f = io.open(markdownFiles[index].filePath)
     if f then
         local content = f:read("*a")
@@ -87,7 +87,7 @@ for index, value in ipairs(markdownFiles) do
     end
 end
 
-for index, value in ipairs(markdownFiles) do
+for index, _ in ipairs(markdownFiles) do
     print("---------------")
     -- print file path with index
     print(index .. ': ' .. markdownFiles[index].filePath)
@@ -116,7 +116,7 @@ local siteTitle
 lfs.rmdir("public")
 lfs.mkdir("public")
 
-for index, value in ipairs(markdownFiles) do
+for index, _ in ipairs(markdownFiles) do
     local workDir = lfs.currentdir()
     -- create html file for that md file
     local htmlFile = io.open(workDir .. "/public/" .. markdownFiles[index].fileName .. ".html", 'w')
@@ -160,6 +160,37 @@ for index, value in ipairs(markdownFiles) do
 
             return table.concat(result, "\n")
         end
+        local function styleParagraph(s)
+            local lines = {}
+            for line in (s .. "\n"):gmatch("([^\n]*)\n") do
+                table.insert(lines, line)
+            end
+
+            local result = {}
+            local pLines = {}
+
+            local function flushP()
+                if #pLines > 0 then
+                    table.insert(result, "<p>" .. table.concat(pLines, "\n") .. "</p>")
+                    pLines = {}
+                end
+            end
+
+            for _, line in ipairs(lines) do
+                local isBlock = line:match("^<") or line:match("^#")
+                local isEmpty = line:match("^%s*$")
+
+                if isBlock or isEmpty then
+                    flushP()
+                    table.insert(result, line)
+                else
+                    table.insert(pLines, line)
+                end
+            end
+            flushP()
+
+            return table.concat(result, "\n")
+        end
         local function styling(s)
             -- blockquote
             local lines = {}
@@ -170,6 +201,9 @@ for index, value in ipairs(markdownFiles) do
             s = table.concat(lines, "\n")
             -- lists
             s = styleLists(s)
+            -- paragraph
+            s = styleParagraph(s)
+            s = s:gsub("<p></p>", "")
             -- line breaks
             s = s:gsub("\r?\n", "<br>")
             -- remove <br> tags around block elements
