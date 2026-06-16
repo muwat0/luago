@@ -124,6 +124,8 @@ for index, value in ipairs(markdownFiles) do
         local content = indexFile
 
         -- STYLING
+        -- blockquote
+        markdownFiles[index].content = markdownFiles[index].content:gsub(">%s*(.-)%s*\r?\n", "<blockquote>%1</blockquote>")
         -- line breaks
         markdownFiles[index].content = markdownFiles[index].content:gsub("\r?\n", "<br>")
         -- headers
