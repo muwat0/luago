@@ -138,6 +138,8 @@ for index, value in ipairs(markdownFiles) do
         -- bold and italic text
         markdownFiles[index].content = markdownFiles[index].content:gsub("%*%*(.-)%*%*", "<b>%1</b>")
         markdownFiles[index].content = markdownFiles[index].content:gsub("%*(.-)%*", "<i>%1</i>")
+        -- images
+        markdownFiles[index].content = markdownFiles[index].content:gsub("!%[(.-)%]%((.-)%)", '<img src="%2">%1</img>')
         -- links
         markdownFiles[index].content = markdownFiles[index].content:gsub("%[(.-)%]%((.-)%)", '<a href="%2">%1</a>')
         -- code
