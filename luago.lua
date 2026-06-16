@@ -126,6 +126,10 @@ for index, value in ipairs(markdownFiles) do
         -- STYLING
         -- line breaks
         markdownFiles[index].content = markdownFiles[index].content:gsub("\r?\n", "<br>")
+        -- headers
+        markdownFiles[index].content = markdownFiles[index].content:gsub("###%s*(.-)%s*<br>", "<h3>%1</h3>")
+        markdownFiles[index].content = markdownFiles[index].content:gsub("##%s*(.-)%s*<br>", "<h2>%1</h2>")
+        markdownFiles[index].content = markdownFiles[index].content:gsub("#%s*(.-)%s*<br>", "<h1>%1</h1>")
 
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
