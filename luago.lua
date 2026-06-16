@@ -172,6 +172,13 @@ for index, value in ipairs(markdownFiles) do
             s = styleLists(s)
             -- line breaks
             s = s:gsub("\r?\n", "<br>")
+            -- remove <br> tags around block elements
+            s = s:gsub("(</?[uo]l>)<br>", "%1")
+            s = s:gsub("<br>(</?[uo]l>)", "%1")
+            s = s:gsub("(</?li>)<br>", "%1")
+            s = s:gsub("<br>(</?li>)", "%1")
+            s = s:gsub("(</?blockquote>)<br>", "%1")
+            s = s:gsub("<br>(</?blockquote>)", "%1")
             -- headers
             s = s:gsub("######%s*(.-)%s*<br>", "<h6>%1</h6>")
             s = s:gsub("#####%s*(.-)%s*<br>", "<h5>%1</h5>")
