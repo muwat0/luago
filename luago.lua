@@ -124,6 +124,42 @@ for index, value in ipairs(markdownFiles) do
         local content = indexFile
 
         -- STYLING
+        local function styleLists(s)
+            local lines = {}
+            for line in (s .. "\n"):gmatch("([^\n]*)\n") do
+                table.insert(lines, line)
+            end
+
+            local result = {}
+            local inUl = false
+            local inOl = false
+
+            for _, line in ipairs(lines) do
+                local ulItem = line:match("^[%-%*%+]%s+(.*)")
+                local olItem = line:match("^%d+%.%s+(.*)")
+
+                if ulItem then
+                    if inOl then table.insert(result, "</ol>"); inOl = false end
+                    if not inUl then table.insert(result, "<ul>"); inUl = true end
+                    table.insert(result, "<li>" .. ulItem .. "</li>")  -- ulItem!
+
+                elseif olItem then
+                    if inUl then table.insert(result, "</ul>"); inUl = false end
+                    if not inOl then table.insert(result, "<ol>"); inOl = true end
+                    table.insert(result, "<li>" .. olItem .. "</li>")
+
+                else
+                    if inUl then table.insert(result, "</ul>"); inUl = false end
+                    if inOl then table.insert(result, "</ol>"); inOl = false end
+                    table.insert(result, line)
+                end
+            end
+
+            if inUl then table.insert(result, "</ul>") end
+            if inOl then table.insert(result, "</ol>") end
+
+            return table.concat(result, "\n")
+        end
         local function styling(s)
             -- blockquote
             local lines = {}
@@ -131,7 +167,9 @@ for index, value in ipairs(markdownFiles) do
                 local nline = line:gsub("^>%s*(.*)", "<blockquote>%1</blockquote>")
                 table.insert(lines, nline)
             end
-            s = table.concat(lines)
+            s = table.concat(lines, "\n")
+            -- lists
+            s = styleLists(s)
             -- line breaks
             s = s:gsub("\r?\n", "<br>")
             -- headers
@@ -155,7 +193,6 @@ for index, value in ipairs(markdownFiles) do
             s = s:gsub("`(.-)`", "<code>%1</code>")
             -- horizontal rule
             s = s:gsub("%-%-%-", "<hr>")
-            -- TODO: ordered and unordered lists
             -- TODO: p for normal text
 
             return s
