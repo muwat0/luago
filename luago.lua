@@ -207,12 +207,17 @@ for index, _ in ipairs(markdownFiles) do
             -- line breaks
             s = s:gsub("\r?\n", "<br>")
             -- remove <br> tags around block elements
-            s = s:gsub("(</?[uo]l>)<br>", "%1")
-            s = s:gsub("<br>(</?[uo]l>)", "%1")
-            s = s:gsub("(</?li>)<br>", "%1")
-            s = s:gsub("<br>(</?li>)", "%1")
-            s = s:gsub("(</?blockquote>)<br>", "%1")
-            s = s:gsub("<br>(</?blockquote>)", "%1")
+            local blockTags = { "ul", "ol", "li", "blockquote", "p",
+            "h1", "h2", "h3", "h4", "h5", "h6", "hr" }
+            for _, tag in ipairs(blockTags) do
+                s = s:gsub("(</" .. tag .. ">)<br>", "%1")
+                s = s:gsub("<br>(</" .. tag .. ">)", "%1")
+                s = s:gsub("(<" .. tag .. ">)<br>", "%1")
+                s = s:gsub("<br>(<" .. tag .. ">)", "%1")
+            end
+            -- self-closing hr
+            s = s:gsub("(<hr>)<br>", "%1")
+            s = s:gsub("<br>(<hr>)", "%1")
             -- headers
             s = s:gsub("######%s*(.-)%s*<br>", "<h6>%1</h6>")
             s = s:gsub("#####%s*(.-)%s*<br>", "<h5>%1</h5>")
