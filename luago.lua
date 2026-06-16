@@ -124,31 +124,36 @@ for index, value in ipairs(markdownFiles) do
         local content = indexFile
 
         -- STYLING
-        -- blockquote
-        markdownFiles[index].content = markdownFiles[index].content:gsub(">%s*(.-)%s*\r?\n", "<blockquote>%1</blockquote>")
-        -- line breaks
-        markdownFiles[index].content = markdownFiles[index].content:gsub("\r?\n", "<br>")
-        -- headers
-        markdownFiles[index].content = markdownFiles[index].content:gsub("######%s*(.-)%s*<br>", "<h6>%1</h6>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("#####%s*(.-)%s*<br>", "<h5>%1</h5>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("####%s*(.-)%s*<br>", "<h4>%1</h4>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("###%s*(.-)%s*<br>", "<h3>%1</h3>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("##%s*(.-)%s*<br>", "<h2>%1</h2>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("#%s*(.-)%s*<br>", "<h1>%1</h1>")
-        -- TODO: h1 and h2 using == and --
-        -- bold and italic text
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%*%*(.-)%*%*", "<b>%1</b>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%*(.-)%*", "<i>%1</i>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%_%_(.-)%_%_", "<b>%1</b>")
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%_(.-)%_", "<i>%1</i>")
-        -- images
-        markdownFiles[index].content = markdownFiles[index].content:gsub("!%[(.-)%]%((.-)%)", '<img src="%2" alt="%1"></img>')
-        -- links
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%[(.-)%]%((.-)%)", '<a href="%2">%1</a>')
-        -- code
-        markdownFiles[index].content = markdownFiles[index].content:gsub("`(.-)`", "<code>%1</code>")
-        -- horizontal rule
-        markdownFiles[index].content = markdownFiles[index].content:gsub("%-%-%-", "<hr>")
+        local function styling(s)
+            -- blockquote
+            s = s:gsub(">%s*(.-)%s*\r?\n", "<blockquote>%1</blockquote>")
+            -- line breaks
+            s = s:gsub("\r?\n", "<br>")
+            -- headers
+            s = s:gsub("######%s*(.-)%s*<br>", "<h6>%1</h6>")
+            s = s:gsub("#####%s*(.-)%s*<br>", "<h5>%1</h5>")
+            s = s:gsub("####%s*(.-)%s*<br>", "<h4>%1</h4>")
+            s = s:gsub("###%s*(.-)%s*<br>", "<h3>%1</h3>")
+            s = s:gsub("##%s*(.-)%s*<br>", "<h2>%1</h2>")
+            s = s:gsub("#%s*(.-)%s*<br>", "<h1>%1</h1>")
+            -- TODO: h1 and h2 using == and --
+            -- bold and italic text
+            s = s:gsub("%*%*(.-)%*%*", "<b>%1</b>")
+            s = s:gsub("%*(.-)%*", "<i>%1</i>")
+            s = s:gsub("%_%_(.-)%_%_", "<b>%1</b>")
+            s = s:gsub("%_(.-)%_", "<i>%1</i>")
+            -- images
+            s = s:gsub("!%[(.-)%]%((.-)%)", '<img src="%2" alt="%1"></img>')
+            -- links
+            s = s:gsub("%[(.-)%]%((.-)%)", '<a href="%2">%1</a>')
+            -- code
+            s = s:gsub("`(.-)`", "<code>%1</code>")
+            -- horizontal rule
+            s = s:gsub("%-%-%-", "<hr>")
+
+            return s
+        end
+        markdownFiles[index].content = styling(markdownFiles[index].content)
 
         -- replace <!-- sitecontents --> with markdown file content
         local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
