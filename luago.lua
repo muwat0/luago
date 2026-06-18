@@ -260,22 +260,13 @@ for index, _ in ipairs(markdownFiles) do
             end
             markdownFiles[index].content = styling(markdownFiles[index].content)
 
-            -- replace <!-- sitecontents --> with markdown file content
-            local start_idx, end_idx = content:find("<!-- sitecontents -->", 1, true)
-            if start_idx and end_idx then
-                local first = content:sub(1, start_idx - 1)
-                local second = content:sub(end_idx + 1)
-                content = first .. markdownFiles[index].content .. second
-            end
-            while content:find("<!-- title -->", 1, true) do
-                start_idx, end_idx = content:find("<!-- title -->", 1, true)
-                if start_idx and end_idx then
-                    local first = content:sub(1, start_idx - 1)
-                    local second = content:sub(end_idx + 1)
-                    content = first .. markdownFiles[index].options["title"] .. second
-                end
-            end
+            -- start_idx, end_idx = c
+            -- {{pageContent}} shortcode
+            content = content:gsub("{{pageContent}}", markdownFiles[index].content)
+            -- {{pageTitle}} shortcode
+            content = content:gsub("{{pageTitle}}", markdownFiles[index].options["title"])
 
+            local start_idx, end_idx
             -- list shortcodes
             while content:find("{{list:}}", 1, true) do
                 start_idx, end_idx = content:find("{{list:}}")
