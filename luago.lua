@@ -2,48 +2,14 @@ local script_dir = debug.getinfo(1, "S").source:match("@?(.*/)")
 if script_dir then package.path = script_dir .. "?.lua;" .. script_dir .. "?/init.lua;" .. package.path end
 
 local lfs = require("lfs")
-
--- list of markdown files in working directory
-local markdownFiles = {}
-
-local haveIndexmd = false
-local haveIndexhtml = false
--- amount of markdown files in working directory
-local markdownFileCount = 0
 local currentDir = lfs.currentdir()
-for file in lfs.dir(currentDir) do
-    -- ignore "." and ".." files
-    if not(file:sub(1,2) == ".." or file:sub(1,1) == '.') then
-        local filePath = currentDir .. '/' .. file
-        if file:match("index.md") then haveIndexmd = true end
-        if file:match("index.html") then haveIndexhtml = true end
-        -- match file names ending with ".md"
-        if file:match("%.md$") then
-            markdownFileCount = markdownFileCount + 1
-            markdownFiles[markdownFileCount] = {
-                options = {},
-                filePath = filePath,
-                fileName = file:sub(1, file:len()-3),
-                content = "",
-                hasHtml = false
-            }
-        end
-    end
-end
--- check html files with same name as the md files
-for file in lfs.dir(currentDir) do
-    if file:match("%.html$") then
-        for index, value in ipairs(markdownFiles) do
-            if file:match(value.fileName .. ".html") then
-                markdownFiles[index].hasHtml = true
-                print(value.fileName .. "file has a html template file.")
-            end
-        end
-    end
-end
 
--- stop the program if "index.html" or "index.md" doesn't exist
-if (not(haveIndexhtml) and not(haveIndexmd)) then return print("Can't find index.html or index.md!") end
+-- initialize markdownFiles table and check html files
+local markdownFiles, err = require("fileStruct")(currentDir)
+-- print error and stop the program if index.html or index.md doesn't exist
+if not markdownFiles then
+    return print(err)
+end
 
 -- check for options section on every markdown file
 for index, file in ipairs(markdownFiles) do
