@@ -1,3 +1,4 @@
+local lfs = require("lfs")
 local module = {}
 local function styleLists(s)
     local lines = {}
@@ -135,6 +136,35 @@ function module.transform(s)
     s = s:gsub("%-%-%-", "<hr>")
 
     return s
+end
+
+function module.formatShortcode(element, markdownFiles, index)
+    local dir = markdownFiles[index].filePath:match("(.*)/[^/]+%.md$")
+    local results = {}
+
+    for mdfile in lfs.dir(dir) do
+        if mdfile:match("%.md$") and mdfile ~= markdownFiles[index].fileName .. ".md" then
+            local fileName = mdfile:match("(.-)%.md$")
+
+            for i, _ in ipairs(markdownFiles) do
+                if markdownFiles[i].fileName == fileName then
+                    local copy = element
+
+                    -- replace items starting with list.item.
+                    for option in copy:gmatch("{{list%.item%.(.-)}}") do
+                        local value = markdownFiles[i].options[option]
+                        if value then
+                            copy = copy:gsub("{{list%.item%." .. option .. "}}", value)
+                        end
+                    end
+
+                    table.insert(results, copy)
+                end
+            end
+        end
+    end
+
+    return table.concat(results, "\n")
 end
 
 return module

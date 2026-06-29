@@ -130,35 +130,7 @@ for index, _ in ipairs(markdownFiles) do
                         if start_idx and end_idx then
                             local shortcode = second:sub(1, start_idx - 1)
                             local third = second:sub(end_idx + 1)
-                            local function formatShortcode(element)
-                                local dir = markdownFiles[index].filePath:match("(.*)/[^/]+%.md$")
-                                local results = {}
-
-                                for mdfile in lfs.dir(dir) do
-                                    if mdfile:match("%.md$") and mdfile ~= markdownFiles[index].fileName .. ".md" then
-                                        local fileName = mdfile:match("(.-)%.md$")
-
-                                        for i, _ in ipairs(markdownFiles) do
-                                            if markdownFiles[i].fileName == fileName then
-                                                local copy = element
-
-                                                -- replace items starting with list.item.
-                                                for option in copy:gmatch("{{list%.item%.(.-)}}") do
-                                                    local value = markdownFiles[i].options[option]
-                                                    if value then
-                                                        copy = copy:gsub("{{list%.item%." .. option .. "}}", value)
-                                                    end
-                                                end
-
-                                                table.insert(results, copy)
-                                            end
-                                        end
-                                    end
-                                end
-
-                                return table.concat(results, "\n")
-                            end
-                            shortcode = formatShortcode(shortcode)
+                            shortcode = styling.formatShortcode(shortcode, markdownFiles, index)
                             content = first .. shortcode .. third
                         end
                     end
